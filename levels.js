@@ -55,6 +55,7 @@ class ConsoleLevel extends Level {
     }
 
     drawText() {
+        this.consoleWidth = width*0.1;
         textAlign(CORNER);
         textSize(20);
         noFill();
@@ -79,7 +80,7 @@ class ConsoleLevel extends Level {
                 this.text.splice(i, 1);
                 i--;
             } else {
-                text(this.text[i].text, 10, this.text[i].y);
+                text(this.text[i].text, 10, this.text[i].y, this.consoleWidth, 10);
             }
         }
         this.counter++;
