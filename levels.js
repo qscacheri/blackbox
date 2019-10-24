@@ -1,3 +1,5 @@
+var game;
+
 //SUPER class for all the level classes
 class Level {
     constructor(x, y, color, game) {
@@ -8,6 +10,7 @@ class Level {
         this.color = color;
         //give the levels a reference to the Game so when user completes a level the level can change the gamestate
         this.game = game;
+        this.complete = false;
     }
 };
 
@@ -55,7 +58,7 @@ class ResizingLevel extends Level {
 class ConsoleLevel extends Level {
     constructor(x, y, color) {
         super(x, y, color);
-        this.consoleWidth = width*0.1;
+        this.consoleWidth = width * 0.1;
         this.consoleX = -this.consoleWidth;
         this.shouldSlideOut = true;
         this.text = [];
@@ -97,7 +100,7 @@ class ConsoleLevel extends Level {
     }
 
     drawText() {
-        this.consoleWidth = width*0.1;
+        this.consoleWidth = width * 0.1;
         textAlign(CORNER);
         textSize(20);
         noFill();
@@ -133,13 +136,14 @@ class ConsoleLevel extends Level {
 //NOT A LEVEL class
 //used to handle entering text for the js console level
 class TextEntry {
-    constructor(x, y, width, height) {
+    constructor(x, y, width, height, colour) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.text = "";
         this.maxLength = 3;
+        this.colour = colour
     }
 
     handleKey(theKey, isBackspace) {
@@ -161,27 +165,14 @@ class TextEntry {
         textAlign(CENTER, CENTER);
         textSize(size / 2);
         noStroke();
-        fill("#997FFF");
+        fill(this.colour);
         text(this.text, this.x, this.y);
     }
 }
 
-// //open the site on a mobile device level
-// class PhoneLevel extends Level {
-//     constructor(xpos, ypos, color) {
-//         super(xpos, ypos, color)
-//         this.won = false;
-//     }
-
-//     draw() {
-
-//     }
-// }
-
 //microphone input volume level
 class VolumeLevel extends Level {
-    constructor(xpos, ypos, color)
-    {
+    constructor(xpos, ypos, color) {
         super(xpos, ypos, color)
         this.won = false;
         this.audioIn;
@@ -190,16 +181,14 @@ class VolumeLevel extends Level {
         this.threshold = .1;
     }
 
-    start()
-    {
+    start() {
         getAudioContext().resume();
         this.audioIn = new p5.AudioIn();
         //start monitoring audio input
         this.audioIn.start();
     }
 
-    draw()
-    {
+    draw() {
         background(0);
         //check if you started monitoring mic input
         if (!this.hasStarted) {
@@ -212,13 +201,12 @@ class VolumeLevel extends Level {
         console.log(level);
 
         //draw a ripple if audio input exceeds the min threshold
-        if (level > this.threshold)
-        {
+        if (level > this.threshold) {
             this.rippleArray.push(new Ripple(random(width), random(height)));
         }
 
         for (var i = 0; i < this.rippleArray.length; i++) {
-            if (this.rippleArray[i].shouldDraw() == true){
+            if (this.rippleArray[i].shouldDraw() == true) {
                 this.rippleArray.splice(i, 1);
                 i--;
             }
@@ -226,35 +214,79 @@ class VolumeLevel extends Level {
     }
 }
 
+class PhoneLevel extends Level {
+    constructor(xpos, ypos, color, game) {
+        super(xpos, ypos, color, game)
+        this.game = game;
+        console.log(this.game.state);
+        this.isOnPhone = false;
+        this.hasStarted = false;
+        this.mediaRule = window.matchMedia("(max-width: 700px)");
+        this.textEntry = new TextEntry(this.width / 2, this.height / 2, 200, 50, this.color);
+
+    }
+
+    draw() {
+        if (!this.hasStarted)
+        {
+            if (window.innerWidth <= 500)
+                this.isOnPhone = true;
+
+            this.hasStarted = true;
+        }
+
+        if (!this.isOnPhone)
+        {
+            console.log(this.textEntry.text);
+            this.running = true;
+            rectMode(CENTER, CENTER);
+            noFill();
+            stroke(255);
+            rect(width / 2, height / 2, 300, 600, width * .03);
+            ellipse(width / 2, 615, 50, 50);
+            rect(width / 2, height * .15, 75, 10, width * .05);
+            noFill();
+            stroke(255);
+            rect(width / 2, height / 2, 200, 50);
+            fill(255)
+            this.textEntry.draw();
+
+        }
+        else {
+            textAlign(CENTER, CENTER);
+            text("The code is: 1230", width / 2, height / 2);
+        }
+
+    }
+
+}
+
 //NOT A LEVEL CLASS
 //class for the circle objects displayed in the volume level
-class Ripple
-{
-	constructor(x, y)
-	{
-		this.x = x;
-		this.y = y;
-		this.colour = color(random(255), random(255), random(255));
-		this.alpha = 100;
-		this.radius = 1;
-	}
+class Ripple {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.colour = color(random(255), random(255), random(255));
+        this.alpha = 100;
+        this.radius = 1;
+    }
 
     //decide if this ripple should be drawn or not
-	shouldDraw()
-	{
+    shouldDraw() {
         var shouldDelete = false
 
-		fill(this.colour);
-		this.colour.alpha = this.alpha;
-		stroke(this.colour);
-		ellipse(this.x, this.y, this.radius * 2, this.radius * 2);
+        fill(this.colour);
+        this.colour.alpha = this.alpha;
+        stroke(this.colour);
+        ellipse(this.x, this.y, this.radius * 2, this.radius * 2);
 
-		if (this.radius >= 30)
-			shouldDelete = true;
+        if (this.radius >= 30)
+            shouldDelete = true;
 
-		this.radius++;
-		this.alpha -= 10
+        this.radius++;
+        this.alpha -= 10
 
         return shouldDelete;
-	}
+    }
 }

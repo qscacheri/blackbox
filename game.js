@@ -13,6 +13,7 @@ class Game {
         this.levels.push(new ResizingLevel(100, 100, color("#79DA42"), this));
         this.levels.push(new ConsoleLevel(150, 100, color("#CEDA42"), this));
         this.levels.push(new VolumeLevel(200, 100, color("#FFEF00"), this));
+        this.levels.push(new PhoneLevel(250, 100, color("#FFEF00"), this));
         this.backButton = new BackButton(10, 10, 30, 30);
     }
 
@@ -105,7 +106,7 @@ class BackButton {
         this.images = [];
         this.pixelsCopy = this.img.pixels.slice(0);
     }
-    
+
     //for responsive design sizing
     resize(x, y, width, height)
     {
