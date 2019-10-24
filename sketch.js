@@ -66,8 +66,10 @@ function keyPressed() {
 
 function windowResized() {
 	resizeCanvas(container.offsetWidth, container.offsetHeight);
-	if (game.currentLevel == 0)
-		game.levels[0].won == true;
+	if (game.currentLevel == 0) {
+		game.state = Game.states.levelComplete;
+		game.levels[game.currentLevel].isCompleted = true;
+	}
 }
 
 function mousePressed()

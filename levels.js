@@ -1,13 +1,55 @@
 //SUPER class for all the level classes
 class Level {
-    constructor(x, y, color) {
+    constructor(x, y, color, game) {
         this.icon = {
             x: x,
             y: y
         };
         this.color = color;
+        //give the levels a reference to the Game so when user completes a level the level can change the gamestate
+        this.game = game;
     }
 };
+
+//resizing the browser window level
+class ResizingLevel extends Level {
+    constructor(xpos, ypos, color) {
+        super(xpos, ypos, color)
+        this.won = false;
+        this.width = 40;
+        this.height = 0;
+        this.isCompleted = false;
+    }
+
+    draw() {
+        //draw the window image clue
+        fill(255);
+        rectMode(CENTER, CENTER);
+        rect(width / 2, height / 2, this.width, this.height);
+
+        //make it "resize" itself
+        this.width += 1;
+        this.height += 1;
+        if (this.width > 300)
+            this.width = 40;
+        if (this.height > 200)
+            this.height = 0;
+
+        //draw the 3 broswer buttons (close, minimize, expand)
+        ellipseMode(CORNER);
+        noStroke();
+        fill(255, 0, 0);
+        ellipse(2 + width / 2 - this.width / 2, 2 + height / 2 - this.height / 2, 10, 10);
+
+        fill(255, 255, 0);
+        ellipse(14 + width / 2 - this.width / 2, 2 + height / 2 - this.height / 2, 10, 10);
+
+        fill(0, 255, 0);
+        ellipse(28 + width / 2 - this.width / 2, 2 + height / 2 - this.height / 2, 10, 10);
+        ellipseMode(CENTER);
+
+    }
+}
 
 //open javascript console level
 class ConsoleLevel extends Level {
@@ -124,61 +166,22 @@ class TextEntry {
     }
 }
 
-//resizing the browser window level
-class ResizingLevel extends Level {
-    constructor(xpos, ypos, color) {
-        super(xpos, ypos, color)
-        this.won = false;
-        this.width = 40;
-        this.height = 0;
-        this.isCompleted = false;
-    }
+// //open the site on a mobile device level
+// class PhoneLevel extends Level {
+//     constructor(xpos, ypos, color) {
+//         super(xpos, ypos, color)
+//         this.won = false;
+//     }
 
-    draw() {
-        //draw the window image clue
-        fill(255);
-        rectMode(CENTER, CENTER);
-        rect(width / 2, height / 2, this.width, this.height);
+//     draw() {
 
-        //make it "resize" itself
-        this.width += 1;
-        this.height += 1;
-        if (this.width > 300)
-            this.width = 40;
-        if (this.height > 200)
-            this.height = 0;
-
-        //draw the 3 broswer buttons (close, minimize, etc.)
-        ellipseMode(CORNER);
-        noStroke();
-        fill(255, 0, 0);
-        ellipse(2 + width / 2 - this.width / 2, 2 + height / 2 - this.height / 2, 10, 10);
-
-        fill(255, 255, 0);
-        ellipse(14 + width / 2 - this.width / 2, 2 + height / 2 - this.height / 2, 10, 10);
-
-        fill(0, 255, 0);
-        ellipse(28 + width / 2 - this.width / 2, 2 + height / 2 - this.height / 2, 10, 10);
-        ellipseMode(CENTER);
-
-    }
-}
-
-//open the site on a mobile device level
-class PhoneLevel extends Level {
-    constructor(xpos, ypos, color) {
-        super(xpos, ypos, color)
-        this.won = false;
-    }
-
-    draw() {
-
-    }
-}
+//     }
+// }
 
 //microphone input volume level
 class VolumeLevel extends Level {
-    constructor(xpos, ypos, color) {
+    constructor(xpos, ypos, color)
+    {
         super(xpos, ypos, color)
         this.won = false;
         this.audioIn;
