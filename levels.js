@@ -61,7 +61,7 @@ class ConsoleLevel extends Level {
         this.consoleX = -this.consoleWidth;
         this.shouldSlideOut = true;
         this.text = [];
-        this.textEntry = new TextEntry(width/2, height/2, width/4, height/16);
+        this.textEntry = new TextEntry(width/2, height/2, width/4, height/16, this.color);
         this.isCompleted = false;
     }
 
@@ -226,7 +226,7 @@ class PhoneLevel extends Level {
         this.isOnPhone = false;
         this.hasStarted = false;
         this.mediaRule = window.matchMedia("(max-width: 700px)");
-        this.textEntry = new TextEntry(this.width / 2, this.height / 2, 200, 50, this.color);
+        this.textEntry = new TextEntry(width / 2, height / 2, 200, 50, this.color);
 
     }
 

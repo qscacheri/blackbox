@@ -11,9 +11,9 @@ class Game {
         this.levels = [];
         //these are the actual levels
         this.levels.push(new ResizingLevel(100, 100, color("#79DA42"), this));
-        this.levels.push(new ConsoleLevel(150, 100, color("#CEDA42"), this));
-        this.levels.push(new VolumeLevel(200, 100, color("#FFEF00"), this));
-        this.levels.push(new PhoneLevel(250, 100, color("#FFEF00"), this));
+        this.levels.push(new ConsoleLevel(200, 100, color("#CEDA42"), this));
+        this.levels.push(new VolumeLevel(300, 100, color("#FFEF00"), this));
+        this.levels.push(new PhoneLevel(400, 100, color("#FFEF00"), this));
         this.backButton = new BackButton(10, 10, 30, 30);
     }
 
@@ -84,7 +84,7 @@ class Game {
         //if you click a level from the menu
         for (var i = 0; i < this.levels.length; i++) {
             if (dist(this.levels[i].icon.x, this.levels[i].icon.y, mouseX, mouseY) <= 75) {
-                
+
                 this.state = Game.states.runningLevel;
                 this.currentLevel = i;
 
