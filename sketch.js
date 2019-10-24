@@ -4,19 +4,20 @@ var consoleLevel;
 var visitors = {};
 var ble;
 
+
+//function for setting color of a png image
 function colorReplace(theColor) {
-    let pixelsCopy = backImage.pixels.slice(0);
-    for (var i = 0; i < backImage.pixels.length; i += 4) {
-        // console.log(this.img.pixels[i]);
-        // if this rg&b pixel is not black (aka not the arrow)
-        if (pixelsCopy[i] != 0 || pixelsCopy[i + 1] != 0 || pixelsCopy[i + 2] != 0) {
-            //set the color to the color of the current level
-            pixelsCopy[i] = theColor.levels[0];
-            pixelsCopy[i + 1] = theColor.levels[1];
-            pixelsCopy[i + 2] = theColor.levels[2];
-        }
-    }
-    return pixelsCopy;
+	let pixelsCopy = backImage.pixels.slice(0);
+	for (var i = 0; i < backImage.pixels.length; i += 4) {
+		// if this rg&b pixel is not black (aka not the arrow)
+		if (pixelsCopy[i] != 0 || pixelsCopy[i + 1] != 0 || pixelsCopy[i + 2] != 0) {
+			//set the color to the color of the current level
+			pixelsCopy[i] = theColor.levels[0];
+			pixelsCopy[i + 1] = theColor.levels[1];
+			pixelsCopy[i + 2] = theColor.levels[2];
+		}
+	}
+	return pixelsCopy;
 }
 
 function preload() {

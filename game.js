@@ -39,27 +39,38 @@ class Game {
 
     //how to draw the level selection screen
     drawLevelSelect() {
+        this.counter = 0;
         noStroke();
         for (var i = 0; i < this.levels.length; i++) {
-            fill(this.levels[i].color);
-            ellipse(this.levels[i].icon.x, this.levels[i].icon.y, 25, 25)
+            if (this.levels[i].isCompleted) {
+                fill(this.levels[i].color);
+            }
+            else {
+                noFill()
+                strokeWeight(3)
+                stroke(this.levels[i].color)
+            }
+            ellipse(this.levels[i].icon.x, this.levels[i].icon.y, 75, 75)
         }
     }
 
     //what to display when the user completes a level
     drawLevelComplete() {
-        if (this.counter < 255)
-            this.counter++
+        if (this.counter < 255) {
+            this.counter += 2;
+        }
         background(this.counter)
+
         textAlign(CENTER)
         textSize(72)
-        fill(0)
+        noStroke()
+        fill("#79DA42")
         text("COMPLETE", width/2, height/2)
     }
 
-    //check if player selected a level
+
     detectClick() {
-        //if you click the level completed screen, go to the main menu
+        //if you click the level completed screen
         if (this.state == Game.states.levelComplete) {
             this.state = Game.states.levelSelect;
         }
@@ -70,9 +81,10 @@ class Game {
             return;
         }
 
+        //if you click a level from the menu
         for (var i = 0; i < this.levels.length; i++) {
-            if (dist(this.levels[i].icon.x, this.levels[i].icon.y, mouseX, mouseY) <= 20) {
-                //set game state to running the selected level
+            if (dist(this.levels[i].icon.x, this.levels[i].icon.y, mouseX, mouseY) <= 75) {
+                
                 this.state = Game.states.runningLevel;
                 this.currentLevel = i;
 

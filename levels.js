@@ -8,7 +8,7 @@ class Level {
             y: y
         };
         this.color = color;
-        //give the levels a reference to the Game so when user completes a level the level can change the gamestate
+        //give the levels a reference to the Game so when user completes a level, the level can change the gamestate
         this.game = game;
         this.complete = false;
     }
@@ -16,9 +16,8 @@ class Level {
 
 //resizing the browser window level
 class ResizingLevel extends Level {
-    constructor(xpos, ypos, color) {
-        super(xpos, ypos, color)
-        this.won = false;
+    constructor(x, y, color) {
+        super(x, y, color)
         this.width = 40;
         this.height = 0;
         this.isCompleted = false;
@@ -56,32 +55,35 @@ class ResizingLevel extends Level {
 
 //open javascript console level
 class ConsoleLevel extends Level {
-    constructor(x, y, color) {
-        super(x, y, color);
-        this.consoleWidth = width * 0.1;
+    constructor(x, y, color, game) {
+        super(x, y, color, game);
+        this.consoleWidth = width*0.2;
         this.consoleX = -this.consoleWidth;
         this.shouldSlideOut = true;
         this.text = [];
-        this.textEntry = new TextEntry(width / 2, height / 2, width / 4, height / 16);
+        this.textEntry = new TextEntry(width/2, height/2, width/4, height/16);
         this.isCompleted = false;
     }
 
-    checkCode() {
+    checkSecretCode() {
         if (parseInt(this.textEntry.text) == 618) {
-            console.log("You got it");
+            console.log("You got it!");
+            this.isCompleted = true;
+            this.game.state = 3;
         }
     }
 
     draw() {
         this.textEntry.draw();
-        console.log("The code is ", 618);
+        console.log("The secret code is 618");
+
         if (this.shouldSlideOut)
-            this.slideOutConsole();
+            this.drawConsole();
         else
             this.drawText();
     }
 
-    slideOutConsole() {
+    drawConsole() {
         fill(255);
         rectMode(CORNER);
         rect(this.consoleX, 0, this.consoleWidth, height);
@@ -91,27 +93,23 @@ class ConsoleLevel extends Level {
         if (this.consoleX >= 0) {
             this.shouldSlideOut = false;
         }
-
-        noFill();
-        stroke(255);
-        // stroke("#997FFF");
-        rectMode(CENTER, CENTER);
-        rect(width / 2, height / 2, width / 4, height / 16);
     }
 
     drawText() {
-        this.consoleWidth = width * 0.1;
+        this.consoleWidth = width*0.2;
+
+        //draw the text box
         textAlign(CORNER);
         textSize(20);
         noFill();
         stroke(255);
         rectMode(CENTER, CENTER);
-        rect(width / 2, height / 2, width / 4, height / 16);
+        rect(width/2, height/2, width/4, height/16);
 
         if (this.counter >= 2) {
             this.text.push({
                 text: random(1000),
-                y: 0
+                y: height
             });
         }
 
@@ -119,13 +117,17 @@ class ConsoleLevel extends Level {
         rectMode(CORNER);
         rect(this.consoleX, 0, this.consoleWidth, height);
         fill("#997FFF");
+        textSize(14)
+        textAlign(LEFT)
+
         for (var i = 0; i < this.text.length; i++) {
-            this.text[i].y += 10;
+            this.text[i].y -= 5;
             if (this.text[i].y > height) {
                 this.text.splice(i, 1);
                 i--;
-            } else {
-                text(this.text[i].text, 10, this.text[i].y, this.consoleWidth, 10);
+            }
+            else {
+                text(this.text[i].text, 10, this.text[i].y);
             }
         }
         this.counter++;
@@ -133,7 +135,7 @@ class ConsoleLevel extends Level {
     }
 }
 
-//NOT A LEVEL class
+//NOT A LEVEL CLASS
 //used to handle entering text for the js console level
 class TextEntry {
     constructor(x, y, width, height, colour) {
@@ -147,6 +149,7 @@ class TextEntry {
     }
 
     handleKey(theKey, isBackspace) {
+        //to use the backspace key
         if (isBackspace) {
             this.text = this.text.substring(0, this.text.length - 1);
             return;
@@ -172,8 +175,9 @@ class TextEntry {
 
 //microphone input volume level
 class VolumeLevel extends Level {
-    constructor(xpos, ypos, color) {
-        super(xpos, ypos, color)
+    constructor(x, y, color)
+    {
+        super(x, y, color)
         this.won = false;
         this.audioIn;
         this.hasStarted = false;
@@ -198,7 +202,7 @@ class VolumeLevel extends Level {
 
         //get the amplitude
         var level = this.audioIn.getLevel();
-        console.log(level);
+        //console.log(level);
 
         //draw a ripple if audio input exceeds the min threshold
         if (level > this.threshold) {
@@ -290,3 +294,15 @@ class Ripple {
         return shouldDelete;
     }
 }
+
+// //open the site on a mobile device level
+// class PhoneLevel extends Level {
+//     constructor(x, y, color) {
+//         super(x, y, color)
+//         this.won = false;
+//     }
+
+//     draw() {
+
+//     }
+// }
