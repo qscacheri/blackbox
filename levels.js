@@ -135,7 +135,6 @@ class ConsoleLevel extends Level {
     }
 
     resized() {
-        console.log("sdf~");
         this.textEntry.x = width / 2;
         this.textEntry.y = height / 2
         this.textEntry.width = width / 4;
@@ -319,10 +318,20 @@ class CloseLevel extends Level {
     constructor(x, y, colour, game) {
         super(x, y, colour, game);
         this.hasVisited = false;
+        this.checkedCookie = false;
     }
 
     draw() {
         this.hasVisited = true;
+        if (!this.hasCheckedCookie)
+        {
+            if (game.hasVisitedLastLevel)
+            {
+                this.isComplete = true;
+                this.game.setState(Game.states.levelComplete);
+            }
+            this.hasCheckedCookie = true;
+        }
 
         if (mouseX > width-100 && mouseY < height-100) {
             noStroke()
@@ -339,12 +348,7 @@ class CloseLevel extends Level {
             rect(width-100, 0, 100, 100)
         }
 
-        var complete = Cookies.get("game-data");
-        if (typeOf(complete) != undefined) {
-            complete = JSON.parse();
-            if (complete.hasVisited) {
-                this.game.setState(Game.states.levelComplete);
-            }
-        }
+
+
     }
 }

@@ -16,7 +16,7 @@ class Game {
         this.levels.push(new PhoneLevel(4 * width / 6, height / 2, color("#FFB02F"), this));
         this.levels.push(new CloseLevel(5 * width / 6, height / 2, color("#FF2F2F"), this));
         this.backButton = new BackButton(width / 7, 10, 30, 30);
-
+        this.hasVisitedLastLevel = false;
         if (window.innerWidth <= 500)
             this.setState(Game.states.onMobile);
 
@@ -26,6 +26,7 @@ class Game {
         for (var i = 0; i < this.levels.length; i++){
             this.levels[i].isComplete = previousState.completeLevels[i];
         }
+        this.hasVisitedLastLevel = previousState.hasVisitedLevel;
     }
 
     draw() {
@@ -138,7 +139,7 @@ class Game {
 
     setState(newState) {
         this.state = newState;
-        this.saveGame(true);
+        this.saveGame(false);
     }
 
     saveGame(updateVisited) {
@@ -148,8 +149,8 @@ class Game {
         };
 
         //keep track of game progress when back button is clicked
-        for (var i = 0; i < game.levels.length; i++){
-            data.completeLevels[i] = game.levels[i].isComplete;
+        for (var i = 0; i < this.levels.length; i++){
+            data.completeLevels[i] = this.levels[i].isComplete;
         }
 
         Cookies.set("game-data", JSON.stringify(data));
@@ -160,7 +161,8 @@ Game.states = {
     levelSelect: 1,
     runningLevel: 2,
     levelComplete: 3,
-    onMobile: 4
+    onMobile: 4,
+    gameComplete: 5
 };
 
 

@@ -80,8 +80,8 @@ function drawPhoneVersion()
 
 window.onbeforeunload = function()
 {
-	debugger
-	console.log("here")
+	console.log("here");
+	console.log(game.levels[4].hasVisited);
 	game.saveGame(game.levels[4].hasVisited);
-	return null;
+	return "penis.png"
 }
