@@ -10,7 +10,13 @@ class Level {
         this.color = color;
         //give the levels a reference to the Game so when user completes a level, the level can change the gamestate
         this.game = game;
-        this.complete = false;
+        this.isComplete = false;
+    }
+
+    resized(x, y)
+    {
+        this.x = x;
+        this.y = y;
     }
 };
 
@@ -20,7 +26,6 @@ class ResizingLevel extends Level {
         super(x, y, color)
         this.width = 40;
         this.height = 0;
-        this.isCompleted = false;
     }
 
     draw() {
@@ -62,13 +67,12 @@ class ConsoleLevel extends Level {
         this.shouldSlideOut = true;
         this.text = [];
         this.textEntry = new TextEntry(width/2, height/2, width/4, height/16, this.color);
-        this.isCompleted = false;
     }
 
     checkSecretCode() {
         if (parseInt(this.textEntry.text) == 618) {
             console.log("You got it!");
-            this.isCompleted = true;
+            this.isComplete = true;
             this.game.state = 3;
         }
     }
@@ -100,7 +104,6 @@ class ConsoleLevel extends Level {
 
         //draw the text box
         textAlign(CORNER);
-        textSize(20);
         noFill();
         stroke(255);
         rectMode(CENTER, CENTER);
@@ -108,7 +111,7 @@ class ConsoleLevel extends Level {
 
         if (this.counter >= 2) {
             this.text.push({
-                text: random(1000),
+                text: Math.ceil(random(100000000)) + "" + Math.ceil(random(100000000)),
                 y: height
             });
         }
@@ -117,17 +120,17 @@ class ConsoleLevel extends Level {
         rectMode(CORNER);
         rect(this.consoleX, 0, this.consoleWidth, height);
         fill("#997FFF");
-        textSize(14)
-        textAlign(LEFT)
+        textSize(this.consoleWidth / 8)
+        textAlign(RIGHT)
 
         for (var i = 0; i < this.text.length; i++) {
-            this.text[i].y -= 5;
+            this.text[i].y -= this.consoleWidth / 8;
             if (this.text[i].y > height) {
                 this.text.splice(i, 1);
                 i--;
             }
             else {
-                text(this.text[i].text, 10, this.text[i].y);
+                text(this.text[i].text, this.consoleWidth, this.text[i].y);
             }
         }
         this.counter++;
@@ -175,14 +178,15 @@ class TextEntry {
 
 //microphone input volume level
 class VolumeLevel extends Level {
-    constructor(x, y, color)
+    constructor(x, y, color, game)
     {
-        super(x, y, color)
+        super(x, y, color, game)
         this.won = false;
         this.audioIn;
         this.hasStarted = false;
         this.rippleArray = [];
         this.threshold = .1;
+        this.maxLevel = .8;
     }
 
     start() {
@@ -202,18 +206,25 @@ class VolumeLevel extends Level {
 
         //get the amplitude
         var level = this.audioIn.getLevel();
-        //console.log(level);
+        console.log(level);
 
         //draw a ripple if audio input exceeds the min threshold
         if (level > this.threshold) {
             this.rippleArray.push(new Ripple(random(width), random(height)));
         }
 
-        for (var i = 0; i < this.rippleArray.length; i++) {
-            if (this.rippleArray[i].shouldDraw() == true) {
+        for (var i = 0; i < this.rippleArray.length; i++)
+        {
+            if (this.rippleArray[i].shouldDraw() == true)
+            {
                 this.rippleArray.splice(i, 1);
                 i--;
             }
+        }
+        if (level >= this.maxLevel)
+        {
+            this.isComplete = true;
+            this.game.state = Game.states.levelComplete;
         }
     }
 }
@@ -250,15 +261,17 @@ class PhoneLevel extends Level {
             ellipse(width / 2, 615, 50, 50);
             rect(width / 2, height * .15, 75, 10, width * .05);
             noFill();
-            stroke(255);
             rect(width / 2, height / 2, 200, 50);
             fill(255)
             this.textEntry.draw();
 
         }
         else {
+            noStroke();
+            fill(this.color)
+            console.log("on phone");
             textAlign(CENTER, CENTER);
-            text("The code is: 1230", width / 2, height / 2);
+            text("The code is: 865", width / 2, height / 2);
         }
 
     }
@@ -292,6 +305,42 @@ class Ripple {
         this.alpha -= 10
 
         return shouldDelete;
+    }
+}
+
+class CloseLevel extends Level
+{
+    constructor(x, y, colour, game)
+    {
+        super(x, y, colour, game);
+    }
+
+    draw()
+    {
+        console.log(Cookies.get("game-data"));
+    }
+
+    setCookie(cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        var expires = "expires=" + d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    getCookie(cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
     }
 }
 
