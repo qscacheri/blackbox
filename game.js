@@ -21,7 +21,10 @@ class Game {
         this.hasVisitedLastLevel = false;
 
         if (window.innerWidth <= 500)
+        {
             this.setState(Game.states.onMobile);
+            return;
+        }
 
         if (typeof previousState === "undefined") return;
 
