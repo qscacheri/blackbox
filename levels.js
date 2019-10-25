@@ -13,8 +13,7 @@ class Level {
         this.isComplete = false;
     }
 
-    resized(x, y)
-    {
+    resized(x, y) {
         this.x = x;
         this.y = y;
     }
@@ -62,16 +61,15 @@ class ResizingLevel extends Level {
 class ConsoleLevel extends Level {
     constructor(x, y, color, game) {
         super(x, y, color, game);
-        this.consoleWidth = width*0.2;
+        this.consoleWidth = width * 0.2;
         this.consoleX = -this.consoleWidth;
         this.shouldSlideOut = true;
         this.text = [];
-        this.textEntry = new TextEntry(width/2, height/2, width/4, height/16, this.color);
+        this.textEntry = new TextEntry(width / 2, height / 2, width / 4, height / 16, this.color);
     }
 
     checkSecretCode() {
         if (parseInt(this.textEntry.text) == 618) {
-            console.log("You got it!");
             this.isComplete = true;
             this.game.state = 3;
         }
@@ -100,14 +98,14 @@ class ConsoleLevel extends Level {
     }
 
     drawText() {
-        this.consoleWidth = width*0.2;
+        this.consoleWidth = width * 0.2;
 
         //draw the text box
         textAlign(CORNER);
         noFill();
         stroke(255);
         rectMode(CENTER, CENTER);
-        rect(width/2, height/2, width/4, height/16);
+        rect(width / 2, height / 2, width / 4, height / 16);
 
         if (this.counter >= 2) {
             this.text.push({
@@ -128,13 +126,21 @@ class ConsoleLevel extends Level {
             if (this.text[i].y > height) {
                 this.text.splice(i, 1);
                 i--;
-            }
-            else {
+            } else {
                 text(this.text[i].text, this.consoleWidth, this.text[i].y);
             }
         }
         this.counter++;
         this.counter %= 3;
+    }
+
+    resized() {
+        console.log("sdf~");
+        this.textEntry.x = width / 2;
+        this.textEntry.y = height / 2
+        this.textEntry.width = width / 4;
+        this.textEntry.height = height / 16;
+
     }
 }
 
@@ -178,8 +184,7 @@ class TextEntry {
 
 //microphone input volume level
 class VolumeLevel extends Level {
-    constructor(x, y, color, game)
-    {
+    constructor(x, y, color, game) {
         super(x, y, color, game)
         this.won = false;
         this.audioIn;
@@ -206,23 +211,19 @@ class VolumeLevel extends Level {
 
         //get the amplitude
         var level = this.audioIn.getLevel();
-        console.log(level);
 
         //draw a ripple if audio input exceeds the min threshold
         if (level > this.threshold) {
             this.rippleArray.push(new Ripple(random(width), random(height)));
         }
 
-        for (var i = 0; i < this.rippleArray.length; i++)
-        {
-            if (this.rippleArray[i].shouldDraw() == true)
-            {
+        for (var i = 0; i < this.rippleArray.length; i++) {
+            if (this.rippleArray[i].shouldDraw() == true) {
                 this.rippleArray.splice(i, 1);
                 i--;
             }
         }
-        if (level >= this.maxLevel)
-        {
+        if (level >= this.maxLevel) {
             this.isComplete = true;
             this.game.state = Game.states.levelComplete;
         }
@@ -233,8 +234,6 @@ class PhoneLevel extends Level {
     constructor(xpos, ypos, color, game) {
         super(xpos, ypos, color, game)
         this.game = game;
-        console.log(this.game.state);
-        this.isOnPhone = false;
         this.hasStarted = false;
         this.mediaRule = window.matchMedia("(max-width: 700px)");
         this.textEntry = new TextEntry(width / 2, height / 2, 200, 50, this.color);
@@ -242,38 +241,35 @@ class PhoneLevel extends Level {
     }
 
     draw() {
-        if (!this.hasStarted)
-        {
-            if (window.innerWidth <= 500)
-                this.isOnPhone = true;
 
-            this.hasStarted = true;
+        this.running = true;
+        rectMode(CENTER, CENTER);
+        noFill();
+        stroke(255);
+        rect(width / 2, height / 2, 300, 600, width * .03);
+        ellipse(width / 2, 615, 50, 50);
+        rect(width / 2, height * .15, 75, 10, width * .05);
+        noFill();
+        rect(width / 2, height / 2, 200, 50);
+        fill(255)
+        this.textEntry.draw();
+
+
+
+    }
+
+    checkSecretCode() {
+        if (parseInt(this.textEntry.text) == 835) {
+            this.isComplete = true;
+            this.game.state = 3;
         }
+    }
 
-        if (!this.isOnPhone)
-        {
-            console.log(this.textEntry.text);
-            this.running = true;
-            rectMode(CENTER, CENTER);
-            noFill();
-            stroke(255);
-            rect(width / 2, height / 2, 300, 600, width * .03);
-            ellipse(width / 2, 615, 50, 50);
-            rect(width / 2, height * .15, 75, 10, width * .05);
-            noFill();
-            rect(width / 2, height / 2, 200, 50);
-            fill(255)
-            this.textEntry.draw();
-
-        }
-        else {
-            noStroke();
-            fill(this.color)
-            console.log("on phone");
-            textAlign(CENTER, CENTER);
-            text("The code is: 865", width / 2, height / 2);
-        }
-
+    resized() {
+        this.textEntry.x = width / 2;
+        this.textEntry.y = height / 2
+        this.textEntry.width = width / 4;
+        this.textEntry.height = height / 16;
     }
 
 }
@@ -308,40 +304,16 @@ class Ripple {
     }
 }
 
-class CloseLevel extends Level
-{
-    constructor(x, y, colour, game)
-    {
+class CloseLevel extends Level {
+    constructor(x, y, colour, game) {
         super(x, y, colour, game);
+        this.hasVisited = false;
     }
 
-    draw()
-    {
-        console.log(Cookies.get("game-data"));
+    draw() {
+        this.hasVisited = true;
     }
 
-    setCookie(cname, cvalue, exdays) {
-        var d = new Date();
-        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-        var expires = "expires=" + d.toUTCString();
-        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-    }
-
-    getCookie(cname) {
-        var name = cname + "=";
-        var decodedCookie = decodeURIComponent(document.cookie);
-        var ca = decodedCookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) == ' ') {
-                c = c.substring(1);
-            }
-            if (c.indexOf(name) == 0) {
-                return c.substring(name.length, c.length);
-            }
-        }
-        return "";
-    }
 }
 
 // //open the site on a mobile device level

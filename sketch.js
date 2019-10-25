@@ -6,7 +6,6 @@ var consoleLevel;
 var visitors = {};
 var ble;
 
-
 //function for setting color of a png image
 function colorReplace(theColor) {
     let pixelsCopy = backImage.pixels.slice(0);
@@ -30,8 +29,7 @@ function preload() {
 function setup() {
     var canvas = createCanvas(container.offsetWidth, window.innerHeight);
     canvas.parent("canvas-container")
-    console.log(container.offsetWidth);
-    game = new Game();
+    game = new Game(Cookies.get("game-data"));
     backImage.loadPixels();
     coloredImages.push(colorReplace(color("#4AFFD3")));
     coloredImages.push(colorReplace(color("#79DA42")));
@@ -52,7 +50,7 @@ function keyPressed() {
         game.levels[3].textEntry.handleKey(key, true);
     } else if (keyCode == ENTER) {
         game.levels[1].checkSecretCode();
-        game.levels[3].checkCode();
+        game.levels[3].checkSecretCode();
 
     } else if (keyCode == SHIFT || keyCode == 20)
         return
@@ -60,14 +58,11 @@ function keyPressed() {
         game.levels[1].textEntry.handleKey(key, false);
         game.levels[3].textEntry.handleKey(key, false);
     }
-    // if (key == 'a' || key == 'A')
-    //       setCookie("visited", true, 1);
-    // if (key == 'f' || key == 'F')
-    //       console.log(getCookie("visited"));
 }
 
 function windowResized() {
     resizeCanvas(container.offsetWidth, container.offsetHeight);
+	game.resized();
     if (game.currentLevel == 0) {
         game.state = Game.states.levelComplete;
         game.levels[game.currentLevel].isComplete = true;
@@ -79,15 +74,20 @@ function mousePressed() {
 
 }
 
+function drawPhoneVersion()
+{
+	text("The secret code is: 835", width / 2, height / 2);
+}
+
 window.onbeforeunload = function()
 {
 
 	var data = {
-		completeLevels: []
+		completeLevels: [],
+		hasVisitedCookieLevel: closeLevel.hasVisited
 	};
 
 	for (var i = 0; i < game.levels.length; i++){
-		console.log(game.levels[i].isComplete);
 		data.completeLevels[i] = game.levels[i].isComplete;
 	}
 

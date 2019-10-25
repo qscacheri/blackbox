@@ -3,22 +3,41 @@ var coloredImages = [];
 
 //class for the whole game, stores all the levels
 class Game {
-    constructor() {
+    constructor(previousState) {
         this.state = Game.states.levelSelect;
         this.currentLevel = -1;
         this.numLevelsComplete = 0;
         this.counter = 0;
         this.levels = [];
         //these are the actual levels
-        this.levels.push(new ResizingLevel(width / 7, 100, color("#4AFFD3"), this));
-        this.levels.push(new ConsoleLevel(2 * width / 7, 100, color("#79DA42"), this));
-        this.levels.push(new VolumeLevel(3 * width / 7, 100, color("#FFEF00"), this));
-        this.levels.push(new PhoneLevel(4 * width / 7, 100, color("#FFB02F"), this));
-        this.levels.push(new CloseLevel(5 * width / 7, 100, color("#FF2F2F"), this));
+        this.levels.push(new ResizingLevel(1 * width / 6, height / 2, color("#4AFFD3"), this));
+        this.levels.push(new ConsoleLevel(2 * width / 6, height / 2, color("#79DA42"), this));
+        this.levels.push(new VolumeLevel(3 * width / 6, height / 2, color("#FFEF00"), this));
+        this.levels.push(new PhoneLevel(4 * width / 6, height / 2, color("#FFB02F"), this));
+        this.levels.push(new CloseLevel(5 * width / 6, height / 2, color("#FF2F2F"), this));
         this.backButton = new BackButton(width / 7, 10, 30, 30);
+
+        if (window.innerWidth <= 500)
+            this.state = Game.states.onMobile;
+
+        if (typeof previousState === "undefined") return;
+
+        previousState = JSON.parse(previousState);
+        for (var i = 0; i < this.levels.length; i++){
+            this.levels[i].isComplete = previousState.completeLevels[i];
+        }
     }
 
     draw() {
+        if (this.state == Game.states.onMobile)
+        {
+            noStroke();
+            fill(255)
+            textSize(height * .05)
+            textAlign(CENTER, CENTER);
+            text("The code is: 865", width / 2, height / 2);
+        }
+
         //draw the level select screen
         if (this.state == Game.states.levelSelect)
             this.drawLevelSelect();
@@ -33,7 +52,7 @@ class Game {
         }
 
         //draw the level complete screen
-        else {
+        else if (this.state == Game.states.levelComplete){
             this.drawLevelComplete()
             this.backButton.draw();
         }
@@ -82,6 +101,16 @@ class Game {
             this.state = Game.states.levelSelect;
             this.levels[1].textEntry.text = "";
             this.levels[3].textEntry.text = "";
+            var data = {
+                completeLevels: [],
+            };
+
+            for (var i = 0; i < game.levels.length; i++){
+                data.completeLevels[i] = game.levels[i].isComplete;
+            }
+
+            Cookies.set("game-data", JSON.stringify(data));
+
             return;
         }
 
@@ -89,6 +118,11 @@ class Game {
         if (this.state == Game.states.levelSelect) {
             for (var i = 0; i < this.levels.length; i++) {
                 if (dist(this.levels[i].icon.x, this.levels[i].icon.y, mouseX, mouseY) <= width / 8) {
+                    if (this.levels[i].isComplete)
+                    {
+                        this.state = Game.states.levelComplete;
+                        return;
+                    }
 
                     this.state = Game.states.runningLevel;
                     this.currentLevel = i;
@@ -103,12 +137,23 @@ class Game {
             }
         }
     }
+
+    resized()
+    {
+        for (var i = 0; i < this.levels.length; i++){
+            this.levels[i].icon.x = (i + 1) * (width / 6);
+        }
+        this.levels[1].resized();
+        this.levels[3].resized();
+
+    }
 }
 
 Game.states = {
     levelSelect: 1,
     runningLevel: 2,
-    levelComplete: 3
+    levelComplete: 3,
+    onMobile: 4
 };
 
 
