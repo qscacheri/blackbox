@@ -45,7 +45,7 @@ class Game {
             fill(255)
             textSize(height * .05)
             textAlign(CENTER, CENTER);
-            text("The code is: 865", width / 2, height / 2);
+            text("The code is: 835", width / 2, height / 2);
         }
 
         //draw the level select screen
