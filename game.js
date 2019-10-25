@@ -94,10 +94,11 @@ class Game {
         //if you click the level completed screen
         if (this.state == Game.states.levelComplete) {
             this.state = Game.states.levelSelect;
+            return;
         }
 
         //if you click the back button
-        if (dist(this.backButton.x, this.backButton.y, mouseX, mouseY) <= this.backButton.width) {
+        else if (dist(this.backButton.x, this.backButton.y, mouseX, mouseY) <= this.backButton.width) {
             this.state = Game.states.levelSelect;
             this.levels[1].textEntry.text = "";
             this.levels[3].textEntry.text = "";
@@ -115,7 +116,7 @@ class Game {
         }
 
         //if you click a level from the menu
-        if (this.state == Game.states.levelSelect) {
+        else if (this.state == Game.states.levelSelect) {
             for (var i = 0; i < this.levels.length; i++) {
                 if (dist(this.levels[i].icon.x, this.levels[i].icon.y, mouseX, mouseY) <= width / 8) {
                     if (this.levels[i].isComplete)
