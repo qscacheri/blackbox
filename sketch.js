@@ -46,7 +46,7 @@ function setup() {
 	{
 		if (game.state == Game.states.lastLevel)
 		{
-			game.state = Game.states.gameComplete;	
+			game.state = Game.states.gameComplete;
 		}
 		else {
 			save = false;
@@ -58,6 +58,10 @@ function setup() {
 
 function draw() {
     background(0);
+	textSize(13);
+	fill(255)
+	noStroke();
+	text("Inspired by Blackbox for iOS \nhttps://www.blackboxpuzzles.com/", width - 200, height - 50);
     game.draw();
 }
 
@@ -91,11 +95,6 @@ function windowResized() {
 
 function mousePressed() {
     game.detectClick();
-}
-
-function drawPhoneVersion()
-{
-	text("The secret code is: 835", width / 2, height / 2);
 }
 
 window.onbeforeunload = function()
