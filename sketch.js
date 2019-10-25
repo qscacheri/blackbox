@@ -5,9 +5,18 @@ var resizingLevel;
 var consoleLevel;
 var visitors = {};
 var ble;
+var font;
+var save = true;
+
+document.getElementById("reset-button").onclick = function()
+{
+	save = false;
+	document.location.reload();
+}
 
 //function for setting color of a png image
-function colorReplace(theColor) {
+function colorReplace(theColor)
+{
     let pixelsCopy = backImage.pixels.slice(0);
     for (var i = 0; i < backImage.pixels.length; i += 4) {
         // if this rg&b pixel is not black (aka not the arrow)
@@ -23,7 +32,7 @@ function colorReplace(theColor) {
 
 function preload() {
     backImage = loadImage("back_arrow.png")
-
+	font = loadFont("BigShouldersText-Light.ttf");
 }
 
 function setup() {
@@ -48,11 +57,13 @@ function keyPressed() {
     if (keyCode == BACKSPACE) {
         game.levels[1].textEntry.handleKey(key, true);
         game.levels[3].textEntry.handleKey(key, true);
-    } else if (keyCode == ENTER) {
+    }
+	else if (keyCode == ENTER) {
         game.levels[1].checkSecretCode();
         game.levels[3].checkSecretCode();
 
-    } else if (keyCode == SHIFT || keyCode == 20)
+    }
+ 	else if (keyCode == SHIFT || keyCode == 20)
         return
     else {
         game.levels[1].textEntry.handleKey(key, false);
@@ -80,8 +91,14 @@ function drawPhoneVersion()
 
 window.onbeforeunload = function()
 {
-	console.log("here");
-	console.log(game.levels[4].hasVisited);
-	game.saveGame(game.levels[4].hasVisited);
-	return "penis.png"
+	if (save)
+		game.saveGame(game.levels[4].hasVisited);
+	else
+	{
+		var data = {
+		completeLevels: [false, false, false, false, false],
+		hasVisitedLevel: false //just for closeLevel
+		};
+		Cookies.set("game-data", JSON.stringify(data));
+	}
 }

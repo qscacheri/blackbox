@@ -15,7 +15,7 @@ class Game {
         this.levels.push(new VolumeLevel(3 * width / 6, height / 2, color("#FFEF00"), this));
         this.levels.push(new PhoneLevel(4 * width / 6, height / 2, color("#FFB02F"), this));
         this.levels.push(new CloseLevel(5 * width / 6, height / 2, color("#FF2F2F"), this));
-        this.backButton = new BackButton(width / 7, 10, 30, 30);
+        this.backButton = new BackButton(10, 10, 30, 30);
         this.hasVisitedLastLevel = false;
         if (window.innerWidth <= 500)
             this.setState(Game.states.onMobile);
@@ -82,11 +82,11 @@ class Game {
             this.counter += 2;
         }
         background(this.counter)
-
+        textFont(font);
         textAlign(CENTER)
         textSize(72)
         noStroke()
-        fill("#79DA42")
+        fill(this.levels[this.currentLevel].color)
         text("COMPLETE", width / 2, height / 2)
     }
 
@@ -99,21 +99,18 @@ class Game {
         //if you click the back button
         else if (dist(this.backButton.x, this.backButton.y, mouseX, mouseY) <= this.backButton.width) {
             this.setState(Game.states.levelSelect);
-            this.levels[1].textEntry.text = "";
-            this.levels[3].textEntry.text = "";
         }
 
         //if you click a level from the menu
         else if (this.state == Game.states.levelSelect) {
             for (var i = 0; i < this.levels.length; i++) {
                 if (dist(this.levels[i].icon.x, this.levels[i].icon.y, mouseX, mouseY) <= width / 8) {
-                    if (this.levels[i].isComplete)
-                    {
-                        this.setState(Game.states.levelComplete);
-                        return;
-                    }
 
-                    this.setState(Game.states.runningLevel);
+                    if (this.levels[i].isComplete)
+                        this.setState(Game.states.levelComplete);
+                    else
+                        this.setState(Game.states.runningLevel);
+
                     this.currentLevel = i;
 
                     //color the back button
@@ -140,6 +137,13 @@ class Game {
     setState(newState) {
         this.state = newState;
         this.saveGame(false);
+        this.levels[1].textEntry.text = "";
+        this.levels[3].textEntry.text = "";
+        if (newState != Game.states.levelSelect)
+            document.getElementById("reset-button").style.visibility = "hidden";
+        else {
+            document.getElementById("reset-button").style.visibility = "visible";
+        }
     }
 
     saveGame(updateVisited) {

@@ -1,15 +1,22 @@
 <!doctype html>
 <html>
-  <head>
+
+<head>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <link rel="stylesheet" type="text/css" href="styles.css" />
       <link rel="icon" href="blackbox.png">
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/js-cookie@beta/dist/js.cookie.min.js"></script>
 
-  </head>
-  <body>
-      <div id = "canvas-container"></div>
+</head>
+
+<body>
+      <div id="canvas-container"></div>
+      <div id="button-container">
+          <div id = "button-background">
+              <button id="reset-button">RESET PROGRESS</button>
+          </div>
+      </div>
 
       <script src="../p5/p5.min.js"></script>
       <script src="../p5/p5.dom.min.js"></script>
@@ -18,5 +25,6 @@
       <script src="game.js"></script>
       <script src="levels.js"></script>
       <script src="sketch.js"></script>
-  </body>
+</body>
+
 </html>
