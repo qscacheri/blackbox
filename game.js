@@ -4,34 +4,40 @@ var coloredImages = [];
 //class for the whole game, stores all the levels
 class Game {
     constructor(previousState) {
-        this.state = Game.states.levelSelect;
         this.currentLevel = -1;
         this.numLevelsComplete = 0;
         this.counter = 0;
         this.levels = [];
+        this.boxImage = blackBoxImage;
+
         //these are the actual levels
         this.levels.push(new ResizingLevel(1 * width / 6, height / 2, color("#4AFFD3"), this));
         this.levels.push(new ConsoleLevel(2 * width / 6, height / 2, color("#79DA42"), this));
         this.levels.push(new VolumeLevel(3 * width / 6, height / 2, color("#FFEF00"), this));
         this.levels.push(new PhoneLevel(4 * width / 6, height / 2, color("#FFB02F"), this));
         this.levels.push(new CloseLevel(5 * width / 6, height / 2, color("#FF2F2F"), this));
-        this.backButton = new BackButton(10, 10, 30, 30);
+
+        this.backButton = new BackButton(10, 10, 50, 50);
         this.hasVisitedLastLevel = false;
+
         if (window.innerWidth <= 500)
             this.setState(Game.states.onMobile);
 
         if (typeof previousState === "undefined") return;
 
         previousState = JSON.parse(previousState);
-        for (var i = 0; i < this.levels.length; i++){
+        for (var i = 0; i < this.levels.length; i++) {
             this.levels[i].isComplete = previousState.completeLevels[i];
         }
         this.hasVisitedLastLevel = previousState.hasVisitedLevel;
+
+        this.setState(Game.states.levelSelect);
+
     }
 
     draw() {
-        if (this.state == Game.states.onMobile)
-        {
+        console.log(this.state);
+        if (this.state == Game.states.onMobile) {
             noStroke();
             fill(255)
             textSize(height * .05)
@@ -53,14 +59,29 @@ class Game {
         }
 
         //draw the level complete screen
-        else if (this.state == Game.states.levelComplete){
+        else if (this.state == Game.states.levelComplete) {
             this.drawLevelComplete()
             this.backButton.draw();
+        } else if (this.state == Game.states.lastLevel) {
+            this.drawLastLevel();
+        } else if (this.state == Game.states.gameComplete) {
+            this.drawGameComplete();
         }
+
     }
 
     //how to draw the level selection screen
     drawLevelSelect() {
+        textFont(font)
+        textSize(height / 7);
+        textAlign(LEFT, TOP);
+        fill(0);
+        image(this.boxImage, 350, 10, this.boxImage.width * .2, this.boxImage.height * .2);
+        stroke(255);
+        text("BLACK", 10, 15);
+        textSize(height / 10);
+        text("BOX", 1.5 * textWidth("BLACK"), 15);
+
         this.counter = 0;
         noStroke();
         for (var i = 0; i < this.levels.length; i++) {
@@ -78,6 +99,7 @@ class Game {
 
     //what to display when the user completes a level
     drawLevelComplete() {
+        console.log("sldkjfsldkjflskdjfs");
         if (this.counter < 255) {
             this.counter += 2;
         }
@@ -88,6 +110,18 @@ class Game {
         noStroke()
         fill(this.levels[this.currentLevel].color)
         text("COMPLETE", width / 2, height / 2)
+    }
+
+    drawLastLevel() {
+        this.drawLevelSelect();
+        textAlign(CENTER);
+        fill(255);
+        text("ALMOST DONE. . .", width / 2, height * .7);
+    }
+
+    drawGameComplete() {
+        textSize(height / 4);
+        text("YOU WON.", width / 2, height / 5);
     }
 
     detectClick() {
@@ -124,9 +158,8 @@ class Game {
         }
     }
 
-    resized()
-    {
-        for (var i = 0; i < this.levels.length; i++){
+    resized() {
+        for (var i = 0; i < this.levels.length; i++) {
             this.levels[i].icon.x = (i + 1) * (width / 6);
         }
         this.levels[1].resized();
@@ -139,21 +172,32 @@ class Game {
         this.saveGame(false);
         this.levels[1].textEntry.text = "";
         this.levels[3].textEntry.text = "";
-        if (newState != Game.states.levelSelect)
-            document.getElementById("reset-button").style.visibility = "hidden";
+        if (this.state != Game.states.levelSelect)
+            document.getElementById("button-container").style.visibility = "hidden";
         else {
-            document.getElementById("reset-button").style.visibility = "visible";
+            document.getElementById("button-container").style.visibility = "visible";
         }
+        console.log(this.state);
+
+        for (var i = 0; i < this.levels.length; i++) {
+            console.log(this.levels[i].isComplete);
+            if (this.levels[i].isComplete === false)
+                return;
+        }
+        if (this.state != Game.states.levelSelect || this.state == Game.states.lastLevel)
+            return;
+
+        this.state = Game.states.lastLevel;
     }
 
     saveGame(updateVisited) {
         var data = {
-        completeLevels: [],
-        hasVisitedLevel: updateVisited //just for closeLevel
+            completeLevels: [],
+            hasVisitedLevel: updateVisited //just for closeLevel
         };
 
         //keep track of game progress when back button is clicked
-        for (var i = 0; i < this.levels.length; i++){
+        for (var i = 0; i < this.levels.length; i++) {
             data.completeLevels[i] = this.levels[i].isComplete;
         }
 
@@ -166,7 +210,8 @@ Game.states = {
     runningLevel: 2,
     levelComplete: 3,
     onMobile: 4,
-    gameComplete: 5
+    lastLevel: 5,
+    gameComplete: 6
 };
 
 

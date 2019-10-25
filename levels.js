@@ -32,6 +32,8 @@ class ResizingLevel extends Level {
         fill(255);
         rectMode(CENTER, CENTER);
         rect(width / 2, height / 2, this.width, this.height);
+        fill(220)
+        rect(width/2, height/2 - this.height/2, this.width, 30)
 
         //make it "resize" itself
         this.width += 1;
@@ -234,7 +236,7 @@ class Ripple {
     constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.colour = color(random(255), random(255), random(255));
+        this.color = color("#FFEF00");
         this.alpha = 100;
         this.radius = 1;
     }
@@ -243,9 +245,9 @@ class Ripple {
     shouldDraw() {
         var shouldDelete = false
 
-        fill(this.colour);
-        this.colour.alpha = this.alpha;
-        stroke(this.colour);
+        fill(this.color);
+        this.color.levels[3] = this.alpha;
+        stroke(this.color);
         ellipse(this.x, this.y, this.radius * 2, this.radius * 2);
 
         if (this.radius >= 30)
@@ -333,22 +335,28 @@ class CloseLevel extends Level {
             this.hasCheckedCookie = true;
         }
 
-        if (mouseX > width-100 && mouseY < height-100) {
+        if (mouseX > 0 && mouseX < 100 && mouseY < 100) {
+            console.log("here")
             noStroke()
-            fill("#ff0000")
-            rect(width-100, 0, 100, 100)
+            fill("#FF2F2F")
+            rect(0, 0, 100, 100)
             strokeWeight(5)
             stroke("#b00000")
-            line(width-10, 10, width-90, 90)
-            line(width-90, 10, width-10, 90)
+            line(10, 10, 90, 90)
+            line(90, 10, 10, 90)
         }
-        else {
-            fill(0)
-            noStroke()
-            rect(width-100, 0, 100, 100)
-        }
-
-
-
     }
+}
+
+
+class Confetti {
+    constructor(x, y, game) {
+        this.x = x;
+        this.y = y;
+        this.game = game;
+        this.color = this.game.levels[ Math.ceil(random(5)) ].color;
+
+        // this.speed
+    }
+
 }

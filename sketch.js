@@ -1,5 +1,3 @@
-
-
 var container = document.getElementById("canvas-container")
 var resizingLevel;
 var consoleLevel;
@@ -7,12 +5,9 @@ var visitors = {};
 var ble;
 var font;
 var save = true;
+var welcomeImage;
+var blackBoxImage;
 
-document.getElementById("reset-button").onclick = function()
-{
-	save = false;
-	document.location.reload();
-}
 
 //function for setting color of a png image
 function colorReplace(theColor)
@@ -33,6 +28,8 @@ function colorReplace(theColor)
 function preload() {
     backImage = loadImage("back_arrow.png")
 	font = loadFont("BigShouldersText-Light.ttf");
+	welcomeImage = loadImage("welcome.png");
+	blackBoxImage = loadImage("cube.png");
 }
 
 function setup() {
@@ -45,6 +42,18 @@ function setup() {
     coloredImages.push(colorReplace(color("#FFEF00")));
     coloredImages.push(colorReplace(color("#FFB02F")));
     coloredImages.push(colorReplace(color("#FF2F2F")));
+	document.getElementById("reset-button").onclick = function()
+	{
+		if (game.state == Game.states.lastLevel)
+		{
+			game.state = Game.states.gameComplete;	
+		}
+		else {
+			save = false;
+			document.location.reload();
+		}
+	}
+
 }
 
 function draw() {
