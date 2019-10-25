@@ -71,7 +71,7 @@ class ConsoleLevel extends Level {
     checkSecretCode() {
         if (parseInt(this.textEntry.text) == 618) {
             this.isComplete = true;
-            this.game.state = 3;
+            this.game.setState(Game.states.levelComplete);
         }
     }
 
@@ -145,7 +145,7 @@ class ConsoleLevel extends Level {
 }
 
 //NOT A LEVEL CLASS
-//used to handle entering text for the js console level
+//used to handle entering text
 class TextEntry {
     constructor(x, y, width, height, colour) {
         this.x = x;
@@ -158,7 +158,6 @@ class TextEntry {
     }
 
     handleKey(theKey, isBackspace) {
-        //to use the backspace key
         if (isBackspace) {
             this.text = this.text.substring(0, this.text.length - 1);
             return;
@@ -225,53 +224,9 @@ class VolumeLevel extends Level {
         }
         if (level >= this.maxLevel) {
             this.isComplete = true;
-            this.game.state = Game.states.levelComplete;
+            this.game.setState(Game.states.levelComplete);
         }
     }
-}
-
-class PhoneLevel extends Level {
-    constructor(xpos, ypos, color, game) {
-        super(xpos, ypos, color, game)
-        this.game = game;
-        this.hasStarted = false;
-        this.mediaRule = window.matchMedia("(max-width: 700px)");
-        this.textEntry = new TextEntry(width / 2, height / 2, 200, 50, this.color);
-
-    }
-
-    draw() {
-
-        this.running = true;
-        rectMode(CENTER, CENTER);
-        noFill();
-        stroke(255);
-        rect(width / 2, height / 2, 300, 600, width * .03);
-        ellipse(width / 2, 615, 50, 50);
-        rect(width / 2, height * .15, 75, 10, width * .05);
-        noFill();
-        rect(width / 2, height / 2, 200, 50);
-        fill(255)
-        this.textEntry.draw();
-
-
-
-    }
-
-    checkSecretCode() {
-        if (parseInt(this.textEntry.text) == 835) {
-            this.isComplete = true;
-            this.game.state = 3;
-        }
-    }
-
-    resized() {
-        this.textEntry.x = width / 2;
-        this.textEntry.y = height / 2
-        this.textEntry.width = width / 4;
-        this.textEntry.height = height / 16;
-    }
-
 }
 
 //NOT A LEVEL CLASS
@@ -304,6 +259,62 @@ class Ripple {
     }
 }
 
+//open the game on a mobile device level
+class PhoneLevel extends Level {
+    constructor(xpos, ypos, color, game) {
+        super(xpos, ypos, color, game)
+        this.game = game;
+        this.hasStarted = false;
+        this.mediaRule = window.matchMedia("(max-width: 700px)");
+        this.textEntry = new TextEntry(width / 2, height / 2, 200, 50, this.color);
+    }
+
+    draw() {
+        this.running = true;
+
+        //draw the iphone
+        rectMode(CENTER, CENTER);
+        noFill();
+        stroke(255);
+        rect(width / 2, height / 2, 300, 600, width * .03);
+        ellipse(width / 2, 600, 50, 50);
+        rect(width / 2, height*.12, 75, 10, width * .05);
+        noFill();
+        rect(width / 2, height / 2, 200, 50);
+
+        //draw the game on the phone screen
+        stroke("#4AFFD3")
+        ellipse(width/2 - 80, height/2.5, 25, 25)
+        stroke("#79DA42")
+        ellipse(width/2 - 40, height/2.5, 25, 25)
+        stroke("#FFEF00")
+        ellipse(width/2, height/2.5, 25, 25)
+        stroke("#FFB02F")
+        ellipse(width/2 + 40, height/2.5, 25, 25)
+        stroke("#FF2F2F")
+        ellipse(width/2 + 80, height/2.5, 25, 25)
+
+        fill(255)
+        stroke(255)
+        this.textEntry.draw();
+    }
+
+    checkSecretCode() {
+        if (parseInt(this.textEntry.text) == 835) {
+            this.isComplete = true;
+            this.game.setState(Game.states.levelComplete);
+        }
+    }
+
+    resized() {
+        this.textEntry.x = width / 2;
+        this.textEntry.y = height / 2
+        this.textEntry.width = width / 4;
+        this.textEntry.height = height / 16;
+    }
+}
+
+//close and reopen the browser window level
 class CloseLevel extends Level {
     constructor(x, y, colour, game) {
         super(x, y, colour, game);
@@ -312,18 +323,28 @@ class CloseLevel extends Level {
 
     draw() {
         this.hasVisited = true;
+
+        if (mouseX > width-100 && mouseY < height-100) {
+            noStroke()
+            fill("#ff0000")
+            rect(width-100, 0, 100, 100)
+            strokeWeight(5)
+            stroke("#b00000")
+            line(width-10, 10, width-90, 90)
+            line(width-90, 10, width-10, 90)
+        }
+        else {
+            fill(0)
+            noStroke()
+            rect(width-100, 0, 100, 100)
+        }
+
+        var complete = Cookies.get("game-data");
+        if (typeOf(complete) != undefined) {
+            complete = JSON.parse();
+            if (complete.hasVisited) {
+                this.game.setState(Game.states.levelComplete);
+            }
+        }
     }
-
 }
-
-// //open the site on a mobile device level
-// class PhoneLevel extends Level {
-//     constructor(x, y, color) {
-//         super(x, y, color)
-//         this.won = false;
-//     }
-
-//     draw() {
-
-//     }
-// }

@@ -18,7 +18,7 @@ class Game {
         this.backButton = new BackButton(width / 7, 10, 30, 30);
 
         if (window.innerWidth <= 500)
-            this.state = Game.states.onMobile;
+            this.setState(Game.states.onMobile);
 
         if (typeof previousState === "undefined") return;
 
@@ -89,30 +89,17 @@ class Game {
         text("COMPLETE", width / 2, height / 2)
     }
 
-
     detectClick() {
         //if you click the level completed screen
         if (this.state == Game.states.levelComplete) {
-            this.state = Game.states.levelSelect;
-            return;
+            this.setState(Game.states.levelSelect);
         }
 
         //if you click the back button
         else if (dist(this.backButton.x, this.backButton.y, mouseX, mouseY) <= this.backButton.width) {
-            this.state = Game.states.levelSelect;
+            this.setState(Game.states.levelSelect);
             this.levels[1].textEntry.text = "";
             this.levels[3].textEntry.text = "";
-            var data = {
-                completeLevels: [],
-            };
-
-            for (var i = 0; i < game.levels.length; i++){
-                data.completeLevels[i] = game.levels[i].isComplete;
-            }
-
-            Cookies.set("game-data", JSON.stringify(data));
-
-            return;
         }
 
         //if you click a level from the menu
@@ -121,11 +108,11 @@ class Game {
                 if (dist(this.levels[i].icon.x, this.levels[i].icon.y, mouseX, mouseY) <= width / 8) {
                     if (this.levels[i].isComplete)
                     {
-                        this.state = Game.states.levelComplete;
+                        this.setState(Game.states.levelComplete);
                         return;
                     }
 
-                    this.state = Game.states.runningLevel;
+                    this.setState(Game.states.runningLevel);
                     this.currentLevel = i;
 
                     //color the back button
@@ -147,6 +134,25 @@ class Game {
         this.levels[1].resized();
         this.levels[3].resized();
 
+    }
+
+    setState(newState) {
+        this.state = newState;
+        this.saveGame(true);
+    }
+
+    saveGame(updateVisited) {
+        var data = {
+        completeLevels: [],
+        hasVisitedLevel: updateVisited //just for closeLevel
+        };
+
+        //keep track of game progress when back button is clicked
+        for (var i = 0; i < game.levels.length; i++){
+            data.completeLevels[i] = game.levels[i].isComplete;
+        }
+
+        Cookies.set("game-data", JSON.stringify(data));
     }
 }
 

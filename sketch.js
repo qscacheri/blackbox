@@ -64,14 +64,13 @@ function windowResized() {
     resizeCanvas(container.offsetWidth, container.offsetHeight);
 	game.resized();
     if (game.currentLevel == 0) {
-        game.state = Game.states.levelComplete;
+        game.setState(Game.states.levelComplete);
         game.levels[game.currentLevel].isComplete = true;
     }
 }
 
 function mousePressed() {
     game.detectClick();
-
 }
 
 function drawPhoneVersion()
@@ -81,15 +80,8 @@ function drawPhoneVersion()
 
 window.onbeforeunload = function()
 {
-
-	var data = {
-		completeLevels: [],
-		hasVisitedCookieLevel: closeLevel.hasVisited
-	};
-
-	for (var i = 0; i < game.levels.length; i++){
-		data.completeLevels[i] = game.levels[i].isComplete;
-	}
-
-	Cookies.set("game-data", JSON.stringify(data));
+	debugger
+	console.log("here")
+	game.saveGame(game.levels[4].hasVisited);
+	return null;
 }
