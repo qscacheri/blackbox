@@ -25,37 +25,37 @@ class ResizingLevel extends Level {
         super(x, y, color)
         this.width = 40;
         this.height = 0;
+
+        //pick random starting point on curve
+        this.noiseOffsetX = random(0,1000);
+        noiseDetail(24);
     }
 
     draw() {
         //draw the window image clue
         fill(255);
         rectMode(CENTER, CENTER);
-        rect(width / 2, height / 2, this.width, this.height);
+        rect(width/2, height/2, this.width, this.height, 0, 0, 5, 5);
         fill(220)
-        rect(width/2, height/2 - this.height/2, this.width, 30)
-
-        //make it "resize" itself
-        this.width += 1;
-        this.height += 1;
-        if (this.width > 300)
-            this.width = 40;
-        if (this.height > 200)
-            this.height = 0;
+        rect(width/2, height/2 - this.height/2, this.width, 20, 5, 5);
 
         //draw the 3 broswer buttons (close, minimize, expand)
         ellipseMode(CORNER);
         noStroke();
         fill(255, 0, 0);
-        ellipse(2 + width / 2 - this.width / 2, 2 + height / 2 - this.height / 2, 10, 10);
+        ellipse(3 + width/2 - this.width/2, height/2 - this.height/2 - 5, 10, 10);
 
         fill(255, 255, 0);
-        ellipse(14 + width / 2 - this.width / 2, 2 + height / 2 - this.height / 2, 10, 10);
+        ellipse(15 + width/2 - this.width/2, height/2 - this.height/2 - 5, 10, 10);
 
         fill(0, 255, 0);
-        ellipse(28 + width / 2 - this.width / 2, 2 + height / 2 - this.height / 2, 10, 10);
+        ellipse(28 + width/2 - this.width/2, height/2 - this.height/2 - 5, 10, 10);
         ellipseMode(CENTER);
 
+        var noiseValue = noise(this.noiseOffsetX);
+        this.width = map(noiseValue, 0, 1, 50, 300);
+        this.height = map(noiseValue, 0, 1, 40, 200);
+        this.noiseOffsetX += 0.01;
     }
 }
 
@@ -191,7 +191,7 @@ class VolumeLevel extends Level {
         this.hasStarted = false;
         this.rippleArray = [];
         this.threshold = .1;
-        this.maxLevel = .8;
+        this.maxLevel = .1;
     }
 
     start() {
@@ -315,7 +315,7 @@ class PhoneLevel extends Level {
     }
 }
 
-//close and reopen the browser window level
+//close and reopen (or refresh) the browser window level
 class CloseLevel extends Level {
     constructor(x, y, colour, game) {
         super(x, y, colour, game);
@@ -336,27 +336,53 @@ class CloseLevel extends Level {
         }
 
         if (mouseX > 0 && mouseX < 100 && mouseY < 100) {
-            console.log("here")
             noStroke()
             fill("#FF2F2F")
+            rectMode(CORNER)
             rect(0, 0, 100, 100)
             strokeWeight(5)
             stroke("#b00000")
             line(10, 10, 90, 90)
             line(90, 10, 10, 90)
+            rectMode(CENTER)
         }
     }
 }
 
 
-class Confetti {
+//NOT A LEVEL CLASS
+//class for the confetti screen when you win the game
+class Particle {
     constructor(x, y, game) {
         this.x = x;
         this.y = y;
         this.game = game;
-        this.color = this.game.levels[ Math.ceil(random(5)) ].color;
+        this.color = this.game.levels[ Math.floor(random(5)) ].color;
+        this.ySpeed = random(-2, 2);
+        this.size = random(5, 25);
 
-        // this.speed
+        //pick random starting point on curve
+        this.noiseOffsetX = random(0,1000);
+        noiseDetail(24);
     }
 
+    //disgard particles that go off screen
+    isDone() {
+        if (this.x < 0 || this.x > width)
+            return true;
+        else if (this.y > height)
+            return true;
+        return false;
+    }
+
+    draw() {
+        var xMovement = map(noise(this.noiseOffsetX), 0, 1, -2, 2);
+        this.x += xMovement;
+        this.y += 5;
+        this.noiseOffsetX += 0.01;
+
+        noStroke();
+        fill(this.color);
+        ellipse(this.x, this.y, this.size, this.size);
+    }
 }

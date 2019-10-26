@@ -19,6 +19,7 @@ class Game {
 
         this.backButton = new BackButton(10, 10, 50, 50);
         this.hasVisitedLastLevel = false;
+        this.particles = [];
 
         if (window.innerWidth <= 500)
         {
@@ -39,7 +40,7 @@ class Game {
     }
 
     draw() {
-        console.log(this.state);
+        //console.log(this.state);
         if (this.state == Game.states.onMobile) {
             noStroke();
             fill(255)
@@ -55,9 +56,6 @@ class Game {
         //draw the current level screen
         else if (this.state == Game.states.runningLevel) {
             this.levels[this.currentLevel].draw();
-            if (this.levels[this.currentLevel].isComplete == true) {
-                this.numLevelsComplete++;
-            }
             this.backButton.draw();
         }
 
@@ -65,6 +63,7 @@ class Game {
         else if (this.state == Game.states.levelComplete) {
             this.drawLevelComplete()
             this.backButton.draw();
+            this.numLevelsComplete++;
         } else if (this.state == Game.states.lastLevel) {
             this.drawLastLevel();
         } else if (this.state == Game.states.gameComplete) {
@@ -91,7 +90,8 @@ class Game {
             if (this.levels[i].isComplete) {
                 noStroke();
                 fill(this.levels[i].color);
-            } else {
+            }
+            else {
                 noFill()
                 strokeWeight(3)
                 stroke(this.levels[i].color)
@@ -102,7 +102,6 @@ class Game {
 
     //what to display when the user completes a level
     drawLevelComplete() {
-        console.log("sldkjfsldkjflskdjfs");
         if (this.counter < 255) {
             this.counter += 2;
         }
@@ -123,8 +122,21 @@ class Game {
     }
 
     drawGameComplete() {
-        textSize(height / 4);
-        text("YOU WON.", width / 2, height / 5);
+        textSize(height / 5);
+        fill(255);
+        text("YOU WON", width / 2, height / 5);
+
+        this.particles.push( new Particle(random(width), random(-50, 0), this) );
+        
+        for (var i = 0; i < this.particles.length; i++) {
+            this.particles[i].draw();
+
+            //disgard particles that are off screen
+            if (this.particles[i].isDone()) {
+                this.particles.splice(i, 1);
+                i--;
+            }
+        }
     }
 
     detectClick() {
@@ -180,10 +192,10 @@ class Game {
         else {
             document.getElementById("button-container").style.visibility = "visible";
         }
-        console.log(this.state);
+        //console.log(this.state);
 
         for (var i = 0; i < this.levels.length; i++) {
-            console.log(this.levels[i].isComplete);
+            //console.log(this.levels[i].isComplete);
             if (this.levels[i].isComplete === false)
                 return;
         }
