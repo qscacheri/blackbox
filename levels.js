@@ -191,7 +191,7 @@ class VolumeLevel extends Level {
         this.hasStarted = false;
         this.rippleArray = [];
         this.threshold = .1;
-        this.maxLevel = .1;
+        this.maxLevel = .5;
     }
 
     start() {
@@ -223,7 +223,8 @@ class VolumeLevel extends Level {
                 i--;
             }
         }
-        if (level >= this.maxLevel) {
+        console.log(this.rippleArray.length);
+        if (this.rippleArray.length >= 30) {
             this.isComplete = true;
             this.game.setState(Game.states.levelComplete);
         }
@@ -237,7 +238,7 @@ class Ripple {
         this.x = x;
         this.y = y;
         this.color = color("#FFEF00");
-        this.alpha = 100;
+        this.alpha = 255;
         this.radius = 1;
     }
 
@@ -246,15 +247,15 @@ class Ripple {
         var shouldDelete = false
 
         fill(this.color);
-        this.color.levels[3] = this.alpha;
-        stroke(this.color);
+        this.color.setAlpha(this.alpha);
+        noStroke();
         ellipse(this.x, this.y, this.radius * 2, this.radius * 2);
 
-        if (this.radius >= 30)
+        if (this.radius >= 60)
             shouldDelete = true;
 
         this.radius++;
-        this.alpha -= 10
+        this.alpha -= 6;
 
         return shouldDelete;
     }

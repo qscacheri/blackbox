@@ -94,6 +94,8 @@ function windowResized() {
 
 function mousePressed() {
     game.detectClick();
+    getAudioContext().resume();
+
 }
 
 window.onbeforeunload = function()
