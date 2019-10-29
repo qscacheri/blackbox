@@ -40,7 +40,6 @@ class Game {
     }
 
     draw() {
-        //console.log(this.state);
         if (this.state == Game.states.onMobile) {
             noStroke();
             fill(255)
@@ -127,7 +126,7 @@ class Game {
         text("YOU WON", width / 2, height / 5);
 
         this.particles.push( new Particle(random(width), random(-50, 0), this) );
-        
+
         for (var i = 0; i < this.particles.length; i++) {
             this.particles[i].draw();
 

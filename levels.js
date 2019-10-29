@@ -231,7 +231,6 @@ class VolumeLevel extends Level {
                 i--;
             }
         }
-        console.log(this.rippleArray.length);
         if (this.rippleArray.length >= 30) {
             this.isComplete = true;
             this.game.setState(Game.states.levelComplete);
