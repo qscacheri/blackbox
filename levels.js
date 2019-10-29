@@ -27,7 +27,7 @@ class ResizingLevel extends Level {
         this.height = 0;
 
         //pick random starting point on curve
-        this.noiseOffsetX = random(0,1000);
+        this.noiseOffsetX = random(0, 1000);
         noiseDetail(24);
     }
 
@@ -35,21 +35,21 @@ class ResizingLevel extends Level {
         //draw the window image clue
         fill(255);
         rectMode(CENTER, CENTER);
-        rect(width/2, height/2, this.width, this.height, 0, 0, 5, 5);
+        rect(width / 2, height / 2, this.width, this.height, 0, 0, 5, 5);
         fill(220)
-        rect(width/2, height/2 - this.height/2, this.width, 20, 5, 5);
+        rect(width / 2, height / 2 - this.height / 2, this.width, 20, 5, 5);
 
         //draw the 3 broswer buttons (close, minimize, expand)
         ellipseMode(CORNER);
         noStroke();
         fill(255, 0, 0);
-        ellipse(3 + width/2 - this.width/2, height/2 - this.height/2 - 5, 10, 10);
+        ellipse(3 + width / 2 - this.width / 2, height / 2 - this.height / 2 - 5, 10, 10);
 
         fill(255, 255, 0);
-        ellipse(15 + width/2 - this.width/2, height/2 - this.height/2 - 5, 10, 10);
+        ellipse(15 + width / 2 - this.width / 2, height / 2 - this.height / 2 - 5, 10, 10);
 
         fill(0, 255, 0);
-        ellipse(28 + width/2 - this.width/2, height/2 - this.height/2 - 5, 10, 10);
+        ellipse(28 + width / 2 - this.width / 2, height / 2 - this.height / 2 - 5, 10, 10);
         ellipseMode(CENTER);
 
         var noiseValue = noise(this.noiseOffsetX);
@@ -288,21 +288,21 @@ class PhoneLevel extends Level {
         stroke(255);
         rect(width / 2, height / 2, 300, 600, width * .03);
         ellipse(width / 2, 600, 50, 50);
-        rect(width / 2, height*.12, 75, 10, width * .05);
+        rect(width / 2, height * .12, 75, 10, width * .05);
         noFill();
         rect(width / 2, height / 2, 200, 50);
 
         //draw the game on the phone screen
         stroke("#4AFFD3")
-        ellipse(width/2 - 80, height/2.5, 25, 25)
+        ellipse(width / 2 - 80, height / 2.5, 25, 25)
         stroke("#79DA42")
-        ellipse(width/2 - 40, height/2.5, 25, 25)
+        ellipse(width / 2 - 40, height / 2.5, 25, 25)
         stroke("#FFEF00")
-        ellipse(width/2, height/2.5, 25, 25)
+        ellipse(width / 2, height / 2.5, 25, 25)
         stroke("#FFB02F")
-        ellipse(width/2 + 40, height/2.5, 25, 25)
+        ellipse(width / 2 + 40, height / 2.5, 25, 25)
         stroke("#FF2F2F")
-        ellipse(width/2 + 80, height/2.5, 25, 25)
+        ellipse(width / 2 + 80, height / 2.5, 25, 25)
 
         fill(255)
         stroke(255)
@@ -330,31 +330,54 @@ class CloseLevel extends Level {
         super(x, y, colour, game);
         this.hasVisited = false;
         this.checkedCookie = false;
+        this.counter = 0;
+        this.shouldFlash = false;
     }
 
     draw() {
         this.hasVisited = true;
-        if (!this.hasCheckedCookie)
-        {
-            if (game.hasVisitedLastLevel)
-            {
+        if (!this.hasCheckedCookie) {
+            if (game.hasVisitedLastLevel) {
                 this.isComplete = true;
                 this.game.setState(Game.states.levelComplete);
             }
             this.hasCheckedCookie = true;
         }
 
-        if (mouseX > 0 && mouseX < 100 && mouseY < 100) {
-            noStroke()
-            fill("#FF2F2F")
-            rectMode(CORNER)
-            rect(0, 0, 100, 100)
-            strokeWeight(5)
-            stroke("#b00000")
-            line(10, 10, 90, 90)
-            line(90, 10, 10, 90)
-            rectMode(CENTER)
+        if (!this.shouldFlash) {
+            rectMode(CORNER);
+            fill(100);
+            var h = height * .08;
+            rect(0, h, width, h);
+            fill(this.color);
+            rect(0, h, this.counter, h);
+            this.counter+=50;
+            if (this.counter >= width) {
+                this.counter = 0;
+                this.shouldFlash = true;
+            }
         }
+
+        else {
+            background(255);
+            this.counter++;
+            if (this.counter >= frameRate() * 2)
+            {
+                this.counter = 0;
+                this.shouldFlash = false;
+            }
+        }
+        // if (mouseX > 0 && mouseX < 100 && mouseY < 100) {
+        // noStroke()
+        // fill("#FF2F2F")
+        // rectMode(CORNER)
+        // rect(0, 0, 100, 100)
+        // strokeWeight(5)
+        // stroke("#b00000")
+        // line(10, 10, 90, 90)
+        // line(90, 10, 10, 90)
+        // rectMode(CENTER)
+        // }
     }
 }
 
@@ -366,12 +389,12 @@ class Particle {
         this.x = x;
         this.y = y;
         this.game = game;
-        this.color = this.game.levels[ Math.floor(random(5)) ].color;
+        this.color = this.game.levels[Math.floor(random(5))].color;
         this.ySpeed = random(-2, 2);
         this.size = random(5, 25);
 
         //pick random starting point on curve
-        this.noiseOffsetX = random(0,1000);
+        this.noiseOffsetX = random(0, 1000);
         noiseDetail(24);
     }
 
