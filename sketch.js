@@ -61,7 +61,6 @@ function draw() {
 	textSize(13);
 	fill(255)
 	noStroke();
-	text("Inspired by Blackbox for iOS \nhttps://www.blackboxpuzzles.com/", width - 200, height - 50);
     game.draw();
 }
 
