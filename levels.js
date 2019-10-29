@@ -192,11 +192,14 @@ class VolumeLevel extends Level {
         this.rippleArray = [];
         this.threshold = .1;
         this.maxLevel = .5;
+        this.audioIn = new p5.AudioIn();
+        getAudioContext().resume();
+        this.audioIn.start();
+
     }
 
     start() {
         getAudioContext().resume();
-        this.audioIn = new p5.AudioIn();
         //start monitoring audio input
         this.audioIn.start();
     }
@@ -209,8 +212,13 @@ class VolumeLevel extends Level {
             this.hasStarted = true;
         }
 
+        var level;
+
         //get the amplitude
-        var level = this.audioIn.getLevel();
+        if (this.hasStarted)
+            level = this.audioIn.getLevel();
+        else
+            level = 0;
 
         //draw a ripple if audio input exceeds the min threshold
         if (level > this.threshold) {
