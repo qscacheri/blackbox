@@ -191,11 +191,15 @@ class VolumeLevel extends Level {
         this.hasStarted = false;
         this.rippleArray = [];
         this.threshold = .1;
+<<<<<<< Updated upstream
         this.maxLevel = .5;
         this.audioIn = new p5.AudioIn();
         getAudioContext().resume();
         this.audioIn.start();
 
+=======
+        this.maxLevel = .7;
+>>>>>>> Stashed changes
     }
 
     start() {

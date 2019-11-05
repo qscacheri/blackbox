@@ -125,8 +125,14 @@ class Game {
         fill(255);
         text("YOU WON", width / 2, height / 5);
 
+<<<<<<< Updated upstream
         this.particles.push( new Particle(random(width), random(-50, 0), this) );
 
+=======
+        if (this.particles.length < 150)
+            this.particles.push( new Particle(random(width), random(-50, 0), this) );
+        
+>>>>>>> Stashed changes
         for (var i = 0; i < this.particles.length; i++) {
             this.particles[i].draw();
 
